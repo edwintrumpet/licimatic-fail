@@ -1,7 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-// eslint-disable-next-line import/no-extraneous-dependencies
-const debug = require('debug')('app:puppeteer');
+const OpportunitiesService = require('../services/opportunities');
 
 const grants = 'https://www.grants.gov/custom/search.jsp';
 
@@ -89,12 +88,18 @@ const routes = (app) => {
         await page.click(`a[href="javascript:pageSearchResults( '${currentPage}' )"]`);
       } while (amountOfopportunities < 1000);
       await browser.close();
-      debug(opportunities);
-      debug('amount', opportunities.length);
       res.status(200).json({ data: opportunities, message: 'Scraping works!' });
     } catch (err) {
-      debug(err);
       res.status(500).json({ message: "Scraping doesn't work!" });
+    }
+  });
+
+  router.get('/service', async (req, res) => {
+    try {
+      const opportunities = await OpportunitiesService.syncOpportunities();
+      res.status(200).json({ data: opportunities, message: 'Scraping works!' });
+    } catch (err) {
+      res.status(500).json({ err, message: "Scraping doesn't work!" });
     }
   });
 };
