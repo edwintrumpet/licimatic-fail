@@ -91,7 +91,7 @@ const routes = (app) => {
       await browser.close();
       debug(opportunities);
       debug('amount', opportunities.length);
-      res.status(200).json({ message: 'Scraping works!' });
+      res.status(200).json({ data: opportunities, message: 'Scraping works!' });
     } catch (err) {
       debug(err);
       res.status(500).json({ message: "Scraping doesn't work!" });
